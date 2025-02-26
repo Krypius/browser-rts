@@ -1,0 +1,16 @@
+{
+  "name": "isometric-rts-client",
+  "version": "0.1.0",
+  "description": "Client for Isometric RTS Game",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "cd ../server && python src/main.py"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "wasm-pack": "^0.12.1"
+  }
+}
