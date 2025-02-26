@@ -1,4 +1,4 @@
-# Isometric RTS Game
+# Browser RTS Game
 
 A multiplayer isometric real-time strategy game with particle-like troop simulation. The game features waves of troops crashing into each other with simple, distinct shapes for graphics.
 
