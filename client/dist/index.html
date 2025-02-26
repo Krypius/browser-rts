@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Isometric RTS Game</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #111;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .game-header {
+            padding: 10px;
+            background-color: #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .game-title {
+            font-size: 1.5em;
+            margin: 0;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .unit-selector {
+            display: flex;
+            background-color: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+        
+        .unit-option {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #444;
+            color: #fff;
+            transition: background-color 0.2s;
+        }
+        
+        .unit-option:hover {
+            background-color: #555;
+        }
+        
+        .unit-option.selected {
+            background-color: #4caf50;
+        }
+        
+        .unit-icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        .unit-icon.soldier {
+            border-radius: 50%;
+            background-color: #fff;
+        }
+        
+        .unit-icon.knight {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid #fff;
+            background-color: transparent;
+        }
+        
+        .unit-icon.archer {
+            background-color: #fff;
+        }
+        
+        .game-button {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .game-button:hover {
+            background-color: #555;
+        }
+        
+        .game-canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #game-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .status-connected {
+            color: #4caf50;
+        }
+        
+        .status-disconnected {
+            color: #f44336;
+        }
+        
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #111;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .loading-text {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        
+        .loading-progress {
+            width: 300px;
+            height: 20px;
+            background-color: #222;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .loading-bar {
+            height: 100%;
+            background-color: #4caf50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-header">
+            <h1 class="game-title">Isometric RTS</h1>
+            <div class="game-controls">
+                <div class="unit-selector">
+                    <button id="unit-soldier" class="unit-option selected">
+                        <span class="unit-icon soldier"></span>Soldier
+                    </button>
+                    <button id="unit-knight" class="unit-option">
+                        <span class="unit-icon knight"></span>Knight
+                    </button>
+                    <button id="unit-archer" class="unit-option">
+                        <span class="unit-icon archer"></span>Archer
+                    </button>
+                </div>
+                <button id="spawn-troops" class="game-button" onclick="alert('Inline click handler!'); console.log('Inline click handler!'); return false;">Spawn Troops (Click on map)</button>
+                <button id="toggle-dev-tools" class="game-button">Toggle Dev Tools</button>
+            </div>
+        </div>
+        
+        <div class="game-canvas-container">
+            <canvas id="game-canvas"></canvas>
+            <div id="connection-status" class="connection-status status-disconnected">Disconnected</div>
+            <div class="instructions">
+                <p><strong>Controls:</strong></p>
+                <p>- Hold Alt + click and drag to move the camera</p>
+                <p>- Mouse wheel to zoom in/out</p>
+                <p>- Click and drag to select multiple units</p>
+                <p>- Right-click to move selected units to that location</p>
+                <p>- Hold right-click and move mouse to continuously update movement target</p>
+                <p>- Press Escape to clear selection</p>
+                <p>- Select a unit type (Soldier, Knight, or Archer)</p>
+                <p>- Click on the map to spawn troops in that direction</p>
+                <p>- Toggle Dev Tools to see game statistics</p>
+                <p><strong>Unit Types:</strong></p>
+                <p>- <span class="unit-icon soldier" style="background-color:#aaa"></span> <strong>Soldier:</strong> Standard speed, can attack while moving</p>
+                <p>- <span class="unit-icon knight" style="border-bottom-color:#aaa"></span> <strong>Knight:</strong> High speed with acceleration, damage based on speed</p>
+                <p>- <span class="unit-icon archer" style="background-color:#aaa"></span> <strong>Archer:</strong> Ranged attacks, slower movement</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-text">Loading Game...</div>
+        <div class="loading-progress">
+            <div id="loading-bar" class="loading-bar"></div>
+        </div>
+    </div>
+    
+    <script src="socket.io.js"></script>
+    <script src="renderer.js"></script>
+    <script src="game.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>

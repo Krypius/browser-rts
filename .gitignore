@@ -7,7 +7,7 @@ __pycache__/
 env/
 build/
 develop-eggs/
-dist/
+# dist/ TODO: uncomment this after fixing the structure of the project
 downloads/
 eggs/
 .eggs/
